@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Breadcrumb } from "@/app/recipes/_components/Breadcrumb";
-import { IngredientsCard } from "@/app/recipes/_components/IngredientsCard";
-import { InstructionsCard } from "@/app/recipes/_components/InstructionsCard";
-import { RecipeHeader } from "@/app/recipes/_components/RecipeHeader";
-import { RecipeMetadata } from "@/app/recipes/_components/RecipeMetadata";
+import { IngredientsCard } from "@/app/recipes/[recipeId]/_components/IngredientsCard";
+import { InstructionsCard } from "@/app/recipes/[recipeId]/_components/InstructionsCard";
+import { RecipeHeader } from "@/app/recipes/[recipeId]/_components/RecipeHeader";
+import { RecipeMetadata } from "@/app/recipes/[recipeId]/_components/RecipeMetadata";
 import { getRecipeById } from "@/lib/recipes";
+import { Breadcrumb } from "@/shared-components/Breadcrumb";
 
 interface RecipePageProps {
   params: Promise<{
