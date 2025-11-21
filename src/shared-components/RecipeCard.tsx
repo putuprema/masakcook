@@ -3,7 +3,8 @@
 import { ClockIcon, EyeIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
+import { useSavedRecipes } from "@/contexts/SavedRecipesContext";
 import type { Recipe } from "@/types/recipe";
 
 interface RecipeCardProps {
@@ -11,7 +12,8 @@ interface RecipeCardProps {
 }
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
-  const [isSaved, setIsSaved] = useState(false);
+  const { toggleSaveRecipe, isSaved } = useSavedRecipes();
+  const isRecipeSaved = isSaved(recipe);
 
   const totalTime = recipe.prepTime + recipe.cookTime;
 
@@ -29,11 +31,11 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         {/* Save Button Overlay */}
         <button
           type="button"
-          onClick={() => setIsSaved(!isSaved)}
+          onClick={() => toggleSaveRecipe(recipe)}
           className="absolute right-2 top-2 rounded-full bg-white/90 p-2 shadow-md transition-colors hover:bg-white"
-          aria-label={isSaved ? "Unsave recipe" : "Save recipe"}
+          aria-label={isRecipeSaved ? "Unsave recipe" : "Save recipe"}
         >
-          {isSaved ? (
+          {isRecipeSaved ? (
             <HeartSolidIcon className="h-5 w-5 text-red-500" />
           ) : (
             <HeartIcon className="h-5 w-5 text-gray-700" />
@@ -72,13 +74,13 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         </div>
 
         {/* View Details Button */}
-        <button
-          type="button"
+        <Link
+          href={`/recipes/${recipe.id}`}
           className="flex w-full items-center justify-center gap-2 rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
         >
           <EyeIcon className="h-4 w-4" />
           View Recipe
-        </button>
+        </Link>
       </div>
     </div>
   );

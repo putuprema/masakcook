@@ -5,6 +5,7 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
+import Link from "next/link";
 import { getRecipeOfTheDay } from "@/lib/recipes";
 
 // Loading components for Suspense boundaries
@@ -77,12 +78,12 @@ export async function HeroSection() {
             </div>
 
             {/* CTA Button */}
-            <button
-              type="button"
-              className="rounded-lg bg-white px-8 py-3 font-semibold text-gray-900 transition-transform hover:scale-105 hover:shadow-lg"
+            <Link
+              href={`/recipes/${recipe.id}`}
+              className="inline-block rounded-lg bg-white px-8 py-3 font-semibold text-gray-900 transition-transform hover:scale-105 hover:shadow-lg"
             >
               View Full Recipe
-            </button>
+            </Link>
           </div>
         </div>
       </div>
