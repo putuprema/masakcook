@@ -1,30 +1,37 @@
 # MasakCook - Claude Development Instructions
 
-This file contains important context and conventions for Claude when working on this project.
+This file contains important context and conventions for Claude when working on
+this project.
 
 ## Project Overview
 
-MasakCook is a crowd-sourced recipe web application built with Next.js 16, React 19, TypeScript, and Tailwind CSS v4. The app features a homepage with recipe browsing, searching, and a bookmark system for saving favorite recipes.
+MasakCook is a crowd-sourced recipe web application built with Next.js 16,
+React 19, TypeScript, and Tailwind CSS v4. The app features a homepage
+with recipe browsing, searching, and a bookmark system for saving favorite recipes.
 
 ## Architecture Decisions
 
 ### Component Organization
+
 - **Route-specific components**: `src/app/_components/` - Components used only in specific routes
 - **Shared components**: `src/shared-components/` - Reusable components across the app (Navbar, RecipeCard, etc.)
 - **ALL shared/reusable components MUST go in `src/shared-components/`** - This is a strict convention
 
 ### State Management
+
 - **React Context** is used for global state (saved recipes)
 - **localStorage** for persistence
 - Server Components by default, Client Components only when needed ("use client")
 
 ### Data Flow
+
 - Static JSON data in `src/data/recipes.ts`
 - Data fetching utilities in `src/lib/recipes.ts` with simulated delays (300-500ms)
 - API routes in `src/app/api/` for client-server communication
 - Search API: `/api/recipes/search` with keyword and category filters
 
 ### Styling Approach
+
 - **Tailwind CSS v4** (uses new `@import "tailwindcss"` syntax)
 - **Glassmorphism** for navbar: `backdrop-blur-md`, `bg-white/70`
 - **Mobile-first** responsive design
@@ -35,17 +42,20 @@ MasakCook is a crowd-sourced recipe web application built with Next.js 16, React
 ## Tech Stack Specifics
 
 ### Next.js 16 + React 19
+
 - App Router architecture
 - Server Components by default
 - Async Server Components for data fetching
 - Suspense boundaries with loading skeletons
 
 ### TypeScript
+
 - Strict mode enabled
 - Path alias: `@/*` maps to `./src/*`
 - All types in `src/types/`
 
 ### Biome (NOT ESLint/Prettier)
+
 - Linter and formatter in one
 - Run: `pnpm biome check src/`
 - Auto-fix: `pnpm biome check --write src/`
@@ -53,6 +63,7 @@ MasakCook is a crowd-sourced recipe web application built with Next.js 16, React
 - ALWAYS run after making changes
 
 ### Tailwind CSS v4
+
 - New syntax: `@import "tailwindcss"` instead of `@tailwind` directives
 - Custom utilities in `globals.css` (e.g., `.scrollbar-hide`)
 - Geist Sans and Geist Mono fonts configured
@@ -60,11 +71,13 @@ MasakCook is a crowd-sourced recipe web application built with Next.js 16, React
 ## Important Conventions
 
 ### File Naming
+
 - React components: PascalCase (e.g., `RecipeCard.tsx`)
 - Utilities/libs: camelCase (e.g., `recipes.ts`)
 - Types: singular (e.g., `recipe.ts` not `recipes.ts`)
 
 ### Component Structure
+
 ```tsx
 "use client"; // Only if needed
 
@@ -90,16 +103,19 @@ export function Component({ prop }: ComponentProps) {
 ```
 
 ### Button Elements
+
 - ALWAYS add `type="button"` to buttons (Biome requirement)
 - Use semantic HTML for accessibility
 - Add descriptive `aria-label` attributes for icon-only buttons
 
 ### Images
+
 - Use `next/image` component
 - Unsplash URLs for recipe images
 - Always provide `alt` text and `sizes` prop
 
 ### Data Fetching
+
 - Server Components: Use async functions directly
 - Client Components: Use fetch API or import utilities
 - Simulate delays: 300-500ms for realistic UX
@@ -107,9 +123,11 @@ export function Component({ prop }: ComponentProps) {
 ## Context Providers
 
 ### SavedRecipesContext
+
 Located in `src/contexts/SavedRecipesContext.tsx`
 
 **Available methods:**
+
 - `toggleSaveRecipe(recipe: Recipe)` - Save/unsave a recipe (now takes full recipe object)
 - `isSaved(id: string)` - Check if recipe is saved
 - `getSavedCount()` - Get total saved recipes count
@@ -117,6 +135,7 @@ Located in `src/contexts/SavedRecipesContext.tsx`
 - `setSavedRecipes(recipes)` - Set full recipe data
 
 **Usage:**
+
 ```tsx
 import { useSavedRecipes } from "@/contexts/SavedRecipesContext";
 
@@ -138,6 +157,7 @@ savedRecipes.map(recipe => <RecipeItem key={recipe.id} recipe={recipe} />);
 ## Recipe Data Structure
 
 18 sample recipes in `src/data/recipes.ts` with:
+
 - Categories: Breakfast, Lunch, Dinner, Dessert, Snacks, Appetizer, Beverage
 - Difficulty: Easy, Medium, Hard
 - Full metadata: ingredients, instructions, ratings, likes, saves
@@ -146,6 +166,7 @@ savedRecipes.map(recipe => <RecipeItem key={recipe.id} recipe={recipe} />);
 ## API Routes
 
 ### `/api/recipes/search`
+
 - Method: GET
 - Query params: `keyword` (string), `category` (Category | "All")
 - Returns: `{ success: boolean, data: Recipe[], count: number }`
@@ -154,24 +175,28 @@ savedRecipes.map(recipe => <RecipeItem key={recipe.id} recipe={recipe} />);
 ## Common Tasks
 
 ### Adding a New Shared Component
+
 1. Create file in `src/shared-components/`
 2. Export as named export
 3. Import using `@/shared-components/ComponentName`
 4. Run Biome to organize imports
 
 ### Adding New Route
+
 1. Create folder in `src/app/`
 2. Add `page.tsx` for the route
 3. Add `_components/` subfolder for route-specific components
 4. Use Server Components by default
 
 ### Updating Context
+
 1. Modify `src/contexts/SavedRecipesContext.tsx`
 2. Update interface types
 3. Add methods to context value
 4. Export from custom hook
 
 ### Working with Images
+
 ```tsx
 <Image
   src={recipe.image}
@@ -184,15 +209,18 @@ savedRecipes.map(recipe => <RecipeItem key={recipe.id} recipe={recipe} />);
 ```
 
 ### Modal/Dialog Pattern
+
 For modal components (like SavedRecipesModal):
 
 **Structure:**
+
 1. Backdrop button (full screen, closes on click)
 2. Content card (positioned absolutely/fixed)
 3. useRef for click-outside detection
 4. Two useEffect hooks: one for click-outside, one for Escape key
 
 **Implementation:**
+
 ```tsx
 "use client";
 
@@ -245,6 +273,7 @@ export function Modal({ isOpen, onClose }: ModalProps) {
 ```
 
 **Key points:**
+
 - Return `null` if `!isOpen`
 - Separate backdrop and content elements
 - Use `mousedown` event (not `click`) for click-outside
@@ -261,6 +290,7 @@ export function Modal({ isOpen, onClose }: ModalProps) {
 ## Git Workflow
 
 When committing:
+
 1. Stage relevant files
 2. Use descriptive commit messages
 3. Format: `<type>: <description>`
@@ -296,6 +326,7 @@ When committing:
 ## Future Development Guidelines
 
 When adding new features:
+
 1. Follow existing patterns
 2. Keep components small and focused
 3. Use TypeScript strictly (no `any`)
@@ -307,6 +338,7 @@ When adding new features:
 ## Questions to Ask User
 
 Before implementing new features:
+
 - Where should this component live? (shared vs route-specific)
 - Should this be a Server or Client Component?
 - What data structure is needed?

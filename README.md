@@ -1,15 +1,18 @@
 # MasakCook - Recipe Sharing Web App
 
-A modern, crowd-sourced recipe web application built with Next.js 16, React 19, TypeScript, and Tailwind CSS v4.
+A modern, crowd-sourced recipe web application built with Next.js 16, React 19,
+TypeScript, and Tailwind CSS v4.
 
 ## Features
 
 ### 🏠 Homepage
+
 - **Hero Section** - Showcases the "Recipe of the Day" with full-width image banner
 - **Trending Now** - Horizontal scrollable carousel of trending recipes
 - **Search Section** - Real-time recipe search with keyword and category filters
 
 ### 🔖 Bookmark System
+
 - Save/unsave recipes with persistent localStorage
 - Global state management using React Context
 - Navbar badge showing saved recipe count (displays "99+" for 100+)
@@ -19,6 +22,7 @@ A modern, crowd-sourced recipe web application built with Next.js 16, React 19, 
 - Individual unsave buttons for each saved recipe
 
 ### 🎨 UI/UX
+
 - Glassmorphism navbar with backdrop blur effect
 - Responsive mobile-first design
 - Loading states with Suspense boundaries
@@ -81,17 +85,20 @@ masakcook/
 ### Installation
 
 1. Clone the repository
+
 ```bash
 git clone <repository-url>
 cd masakcook
 ```
 
 2. Install dependencies
+
 ```bash
 pnpm install
 ```
 
 3. Run the development server
+
 ```bash
 pnpm dev
 ```
@@ -111,27 +118,35 @@ pnpm lint:fix     # Fix linter issues
 ## Key Features Implementation
 
 ### Recipe Search API
+
 The search functionality uses a dedicated API route (`/api/recipes/search`) that:
+
 - Accepts `keyword` and `category` query parameters
 - Validates input and returns proper HTTP status codes
 - Simulates database query with artificial delays
 - Returns filtered recipes in JSON format
 
 ### Saved Recipes Context
+
 Global state management for bookmarked recipes:
+
 - Persists data to localStorage
 - Provides `toggleSaveRecipe`, `isSaved`, `getSavedCount` methods
 - Handles SSR hydration properly
 - Updates all components reactively
 
 ### Server Components
+
 Leverages React Server Components for optimal performance:
+
 - `HeroSection` - Async data fetching on server
 - `TrendingSection` - Server-side sorting and filtering
 - Suspense boundaries with loading skeletons
 
 ### Glassmorphism Navbar
+
 Modern glass effect using:
+
 - `backdrop-blur-md` for blur effect
 - `bg-white/70` for semi-transparency
 - Sticky positioning that stays on top while scrolling
@@ -139,7 +154,9 @@ Modern glass effect using:
 - Opens SavedRecipesModal on click with smooth animations
 
 ### SavedRecipesModal Component
+
 A dropdown-style modal for managing saved recipes:
+
 - Positioned at top-right below navbar (`right-4 top-20`)
 - Displays recipe thumbnails, titles, categories, and total time
 - Empty state with HeartIcon when no recipes saved
@@ -151,6 +168,7 @@ A dropdown-style modal for managing saved recipes:
 ## Data Structure
 
 ### Recipe Interface
+
 ```typescript
 interface Recipe {
   id: string;

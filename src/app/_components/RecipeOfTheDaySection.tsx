@@ -9,13 +9,13 @@ import Link from "next/link";
 import { getRecipeOfTheDay } from "@/lib/recipes";
 
 // Loading components for Suspense boundaries
-export function HeroSkeleton() {
+export function RecipeOfTheDaySkeleton() {
   return (
     <div className="h-[500px] w-full animate-pulse bg-gray-300 md:h-[600px]" />
   );
 }
 
-export async function HeroSection() {
+export async function RecipeOfTheDaySection() {
   const recipe = await getRecipeOfTheDay();
   const totalTime = recipe.prepTime + recipe.cookTime;
 
