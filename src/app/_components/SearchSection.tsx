@@ -90,11 +90,10 @@ export function SearchSection() {
             <button
               type="button"
               onClick={() => setFilters({ ...filters, category: "All" })}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                filters.category === "All"
+              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${filters.category === "All"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
+                }`}
             >
               All
             </button>
@@ -103,11 +102,10 @@ export function SearchSection() {
                 key={category}
                 type="button"
                 onClick={() => setFilters({ ...filters, category })}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                  filters.category === category
+                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${filters.category === category
                     ? "bg-blue-600 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 {category}
               </button>

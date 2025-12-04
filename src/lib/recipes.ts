@@ -12,14 +12,14 @@ const simulateDelay = (ms: number = 500) =>
  */
 export async function getRecipeOfTheDay(): Promise<Recipe> {
   await connection();
-  await simulateDelay(5000);
+  await simulateDelay(1000);
 
   // For demo purposes, use date to consistently show same recipe each day
   const today = new Date().toDateString();
   const dayIndex = today
     .split("")
     .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const recipeIndex = dayIndex % recipes.length;
+  const recipeIndex = (dayIndex + 1) % recipes.length;
 
   return recipes[recipeIndex];
 }
@@ -32,7 +32,7 @@ export async function getTrendingRecipes(
   limit: number = 10,
 ): Promise<Recipe[]> {
   await connection();
-  await simulateDelay(6000);
+  await simulateDelay(2000);
 
   // Sort by popularity (combination of saves and likes)
   const trendingRecipes = [...recipes].sort((a, b) => {
@@ -50,7 +50,7 @@ export async function getTrendingRecipes(
  */
 export async function searchRecipes(filters: SearchFilters): Promise<Recipe[]> {
   await connection();
-  await simulateDelay(7000);
+  await simulateDelay(700);
 
   let results = [...recipes];
 
@@ -81,7 +81,7 @@ export async function searchRecipes(filters: SearchFilters): Promise<Recipe[]> {
  */
 export async function getRecipeById(id: string): Promise<Recipe | null> {
   await connection();
-  await simulateDelay(8000);
+  await simulateDelay(800);
   return recipes.find((recipe) => recipe.id === id) || null;
 }
 

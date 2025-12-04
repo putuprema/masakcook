@@ -13,7 +13,7 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/70 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-white/60">
+      <nav className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/70 shadow-sm backdrop-blur-md supports-backdrop-filter:bg-white/60">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8 lg:px-12">
           {/* Left: Logo */}
           <Link
@@ -32,7 +32,7 @@ export function Navbar() {
           >
             <BookmarkIcon className="h-6 w-6" />
             {savedCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-semibold text-white">
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-semibold text-white">
                 {savedCount > 99 ? "99+" : savedCount}
               </span>
             )}
