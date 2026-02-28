@@ -692,7 +692,7 @@ export const recipes: Recipe[] = [
     description:
       "Fresh and zesty guacamole with lime, cilantro, and jalapeño. Perfect party dip!",
     image:
-      "https://images.unsplash.com/photo-1623961990059-e1efc34e3e25?w=800&q=80",
+      "https://images.unsplash.com/photo-1595016111459-799a195e7452?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     ingredients: [
       "3 ripe avocados",
       "1 lime, juiced",
