@@ -18,10 +18,6 @@ storage:
     local:
       path: /tmp/tempo/blocks
 
-compactor:
-  compaction:
-    block_retention: 24h
-
 overrides:
   defaults:
     global:

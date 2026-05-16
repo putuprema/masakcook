@@ -25,10 +25,7 @@ export function FrontendObservability() {
       },
 
       instrumentations: [
-        // Mandatory, omits default instrumentations otherwise.
         ...getWebInstrumentations(),
-
-        // Tracing package to get end-to-end visibility for HTTP requests.
         new TracingInstrumentation(),
       ],
     });

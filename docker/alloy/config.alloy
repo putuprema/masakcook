@@ -6,9 +6,19 @@ faro.receiver "default" {
     }
 
     output {
-        logs   = [loki.write.default.receiver]
+        logs   = [loki.process.faro.receiver]
         traces = [otelcol.exporter.otlp.tempo.input]
     }
+}
+
+loki.process "faro" {
+    stage.static_labels {
+        values = {
+            service = "faro",
+        }
+    }
+
+    forward_to = [loki.write.default.receiver]
 }
 
 otelcol.exporter.otlp "tempo" {

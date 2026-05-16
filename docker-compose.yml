@@ -7,7 +7,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_FARO_COLLECTOR_URL=http://localhost:12347
+      - NEXT_PUBLIC_FARO_COLLECTOR_URL=http://localhost:12347/collect
       - NEXT_PUBLIC_APP_ENV=production
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4318
       - OTEL_SERVICE_NAME=masakcook
@@ -27,7 +27,6 @@ services:
       - "4318:4318"
     volumes:
       - ./docker/tempo/tempo-config.yml:/etc/tempo.yaml
-      - tempo-data:/tmp/tempo
     restart: unless-stopped
     networks:
       - masakcook
@@ -39,7 +38,7 @@ services:
       - "3100:3100"
     volumes:
       - ./docker/loki/loki-config.yml:/etc/loki/loki-config.yaml
-      - loki-data:/tmp/loki
+      - loki-data:/loki
     restart: unless-stopped
     networks:
       - masakcook
@@ -61,6 +60,7 @@ services:
     command: ["run", "--server.http.listen-addr=0.0.0.0:12345", "/etc/alloy/config.alloy"]
     ports:
       - "12347:12347"
+      - "12345:12345"
     volumes:
       - ./docker/alloy/config.alloy:/etc/alloy/config.alloy
     depends_on:
@@ -89,7 +89,6 @@ services:
       - masakcook
 
 volumes:
-  tempo-data:
   loki-data:
   grafana-data:
 
