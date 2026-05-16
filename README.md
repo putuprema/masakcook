@@ -38,6 +38,22 @@ TypeScript, and Tailwind CSS v4.
 - **Linter/Formatter:** Biome 2.2.0
 - **Package Manager:** pnpm
 - **Fonts:** Geist Sans & Geist Mono
+- **Monitoring:** Grafana + Loki + Tempo + Faro (via Docker)
+
+## Monitoring
+
+Lihat [MONITORING.md](./MONITORING.md) untuk dokumentasi lengkap setup observability:
+
+- **Frontend RUM** — Grafana Faro Web SDK (web vitals, errors, tracing)
+- **Backend Tracing** — OpenTelemetry + Tempo
+- **Log Management** — Loki + Promtail
+- **Dashboard** — Grafana dengan datasource & dashboard auto-provisioning
+
+```bash
+DOCKER_BUILD=true docker compose up --build
+```
+
+Akses Grafana di [http://localhost:3333](http://localhost:3333)
 
 ## Project Structure
 
@@ -68,10 +84,18 @@ masakcook/
 │   │   └── recipes.ts            # Data fetching utils
 │   └── types/                    # TypeScript types
 │       └── recipe.ts
+├── docker/                       # Docker & monitoring configs
+│   ├── faro-collector/
+│   ├── grafana/
+│   ├── loki/
+│   ├── promtail/
+│   └── tempo/
 ├── public/                       # Static assets
 ├── biome.json                    # Biome config
 ├── next.config.ts                # Next.js config
 ├── tailwind.config.ts            # Tailwind config
+├── Dockerfile                    # Docker image build
+├── docker-compose.yml            # Monitoring stack orchestrator
 └── tsconfig.json                 # TypeScript config
 ```
 
@@ -81,8 +105,11 @@ masakcook/
 
 - Node.js 20+
 - pnpm (recommended)
+- Docker & Docker Compose (untuk monitoring stack)
 
 ### Installation
+
+#### Lokal (tanpa Docker)
 
 1. Clone the repository
 
@@ -104,6 +131,25 @@ pnpm dev
 ```
 
 4. Open [http://localhost:3000](http://localhost:3000)
+
+#### Docker (dengan monitoring stack)
+
+1. Clone & masuk direktori
+
+```bash
+git clone <repository-url>
+cd masakcook
+```
+
+2. Build & jalankan semua service
+
+```bash
+DOCKER_BUILD=true docker compose up --build
+```
+
+3. Akses:
+   - Aplikasi: [http://localhost:3000](http://localhost:3000)
+   - Grafana: [http://localhost:3333](http://localhost:3333)
 
 ### Available Scripts
 

@@ -1,0 +1,80 @@
+{
+  "title": "MasakCook - Observability",
+  "uid": "masakcook-observability",
+  "tags": ["masakcook"],
+  "schemaVersion": 39,
+  "version": 1,
+  "timezone": "browser",
+  "editable": true,
+  "panels": [
+    {
+      "title": "Services Overview",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "count(count by (service_name) ({job=\"docker\"} |= ``))"
+        }
+      ],
+      "description": "Number of services sending logs"
+    },
+    {
+      "title": "Log Volume (30m)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum by(container) (rate({job=\"docker\"}[5m]))",
+          "legendFormat": "{{container}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "showPoints": "never" }
+        }
+      },
+      "description": "Log volume per container"
+    },
+    {
+      "title": "Recent Traces",
+      "type": "table",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "targets": [
+        {
+          "datasource": { "type": "tempo", "uid": "tempo" },
+          "queryType": "search",
+          "limit": 20,
+          "tableType": "traces"
+        }
+      ],
+      "description": "Most recent traces from Tempo"
+    },
+    {
+      "title": "Trace Duration (p95)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "targets": [
+        {
+          "datasource": { "type": "tempo", "uid": "tempo" },
+          "queryType": "nativeSearch",
+          "serviceName": "masakcook",
+          "query": "{ }",
+          "spanName": "HTTP GET",
+          "limit": 100
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": { "showPoints": "never" }
+        }
+      },
+      "description": "P95 trace duration for the app"
+    }
+  ],
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" }
+}

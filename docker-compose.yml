@@ -1,0 +1,97 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_FARO_COLLECTOR_URL=http://localhost:12347
+      - NEXT_PUBLIC_APP_ENV=production
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4318
+      - OTEL_SERVICE_NAME=masakcook
+    depends_on:
+      - tempo
+      - faro-collector
+    restart: unless-stopped
+    networks:
+      - masakcook
+
+  tempo:
+    image: grafana/tempo:latest
+    command: ["-config.file=/etc/tempo.yaml"]
+    ports:
+      - "3200:3200"
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - ./docker/tempo/tempo-config.yml:/etc/tempo.yaml
+      - tempo-data:/tmp/tempo
+    restart: unless-stopped
+    networks:
+      - masakcook
+
+  loki:
+    image: grafana/loki:latest
+    command: ["-config.file=/etc/loki/loki-config.yaml"]
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./docker/loki/loki-config.yml:/etc/loki/loki-config.yaml
+      - loki-data:/tmp/loki
+    restart: unless-stopped
+    networks:
+      - masakcook
+
+  promtail:
+    image: grafana/promtail:latest
+    command: ["-config.file=/etc/promtail/promtail-config.yaml"]
+    volumes:
+      - ./docker/promtail/promtail-config.yml:/etc/promtail/promtail-config.yaml
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - loki
+    restart: unless-stopped
+    networks:
+      - masakcook
+
+  faro-collector:
+    image: grafana/faro-collector:latest
+    ports:
+      - "12347:12347"
+    volumes:
+      - ./docker/faro-collector/collector-config.yml:/etc/faro-collector/config.yml
+    depends_on:
+      - tempo
+      - loki
+    restart: unless-stopped
+    networks:
+      - masakcook
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3333:3000"
+    volumes:
+      - ./docker/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./docker/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - tempo
+      - loki
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    restart: unless-stopped
+    networks:
+      - masakcook
+
+volumes:
+  tempo-data:
+  loki-data:
+  grafana-data:
+
+networks:
+  masakcook:
+    driver: bridge
