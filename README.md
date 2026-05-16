@@ -42,18 +42,18 @@ TypeScript, and Tailwind CSS v4.
 
 ## Monitoring
 
-Lihat [MONITORING.md](./MONITORING.md) untuk dokumentasi lengkap setup observability:
+See [MONITORING.md](./MONITORING.md) for full observability setup documentation:
 
 - **Frontend RUM** — Grafana Faro Web SDK (web vitals, errors, tracing)
 - **Backend Tracing** — OpenTelemetry + Tempo
 - **Log Management** — Loki + Promtail
-- **Dashboard** — Grafana dengan datasource & dashboard auto-provisioning
+- **Dashboard** — Grafana with auto-provisioned datasources & dashboards
 
 ```bash
 DOCKER_BUILD=true docker compose up --build
 ```
 
-Akses Grafana di [http://localhost:3333](http://localhost:3333)
+Access Grafana at [http://localhost:3333](http://localhost:3333)
 
 ## Project Structure
 
@@ -105,11 +105,11 @@ masakcook/
 
 - Node.js 20+
 - pnpm (recommended)
-- Docker & Docker Compose (untuk monitoring stack)
+- Docker & Docker Compose (for monitoring stack)
 
 ### Installation
 
-#### Lokal (tanpa Docker)
+#### Local (without Docker)
 
 1. Clone the repository
 
@@ -132,25 +132,6 @@ pnpm dev
 
 4. Open [http://localhost:3000](http://localhost:3000)
 
-#### Docker (dengan monitoring stack)
-
-1. Clone & masuk direktori
-
-```bash
-git clone <repository-url>
-cd masakcook
-```
-
-2. Build & jalankan semua service
-
-```bash
-DOCKER_BUILD=true docker compose up --build
-```
-
-3. Akses:
-   - Aplikasi: [http://localhost:3000](http://localhost:3000)
-   - Grafana: [http://localhost:3333](http://localhost:3333)
-
 ### Available Scripts
 
 ```bash
@@ -160,6 +141,25 @@ pnpm start        # Start production server
 pnpm lint         # Run Biome linter
 pnpm lint:fix     # Fix linter issues
 ```
+
+#### Docker (with monitoring stack)
+
+1. Clone & enter directory
+
+```bash
+git clone <repository-url>
+cd masakcook
+```
+
+2. Build & run all services
+
+```bash
+DOCKER_BUILD=true docker compose up --build
+```
+
+3. Access:
+   - App: [http://localhost:3000](http://localhost:3000)
+   - Grafana: [http://localhost:3333](http://localhost:3333)
 
 ## Key Features Implementation
 

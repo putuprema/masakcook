@@ -1,8 +1,8 @@
 # Monitoring — MasakCook
 
-Stack observability berbasis **Grafana** yang berjalan di Docker, mencakup **frontend RUM** (via Faro), **backend tracing** (via OpenTelemetry/Tempo), dan **log aggregation** (via Loki/Promtail).
+A **Grafana**-based observability stack running on Docker, covering **frontend RUM** (via Faro), **backend tracing** (via OpenTelemetry/Tempo), and **log aggregation** (via Loki/Promtail).
 
-## Arsitektur
+## Architecture
 
 ```mermaid
 flowchart LR
@@ -16,65 +16,65 @@ flowchart LR
     Grafana -->|query| Loki
 ```
 
-| Service | Port | Fungsi |
+| Service | Port | Description |
 |---|---|---|
 | **App** | `:3000` | Next.js app |
-| **Faro Collector** | `:12347` | Terima RUM dari browser (web vitals, errors, traces) |
+| **Faro Collector** | `:12347` | Receives RUM data from browser (web vitals, errors, traces) |
 | **Tempo** | `:3200` (:4317 gRPC, :4318 HTTP) | Tracing backend |
 | **Loki** | `:3100` | Log aggregation |
-| **Promtail** | — | Ship Docker logs ke Loki |
-| **Grafana** | `:3333` | Dashboard visualisasi |
+| **Promtail** | — | Ships Docker logs to Loki |
+| **Grafana** | `:3333` | Dashboard visualization |
 
 ## Prerequisites
 
 - Docker & Docker Compose
-- pnpm (untuk build lokal)
+- pnpm (for local builds)
 
 ## Setup
 
-### 1. Build & Jalankan Semua Service
+### 1. Build & Run All Services
 
 ```bash
 DOCKER_BUILD=true docker compose up --build
 ```
 
-Atau bertahap:
+Or step by step:
 
 ```bash
 DOCKER_BUILD=true docker compose build app
 docker compose up -d
 ```
 
-### 2. Akses
+### 2. Access
 
 | Service | URL |
 |---|---|
-| Aplikasi | http://localhost:3000 |
+| App | http://localhost:3000 |
 | Grafana | http://localhost:3333 |
 | Tempo HTTP | http://localhost:3200 |
 | Loki HTTP | http://localhost:3100 |
 
-Grafana sudah terkonfigurasi dengan **anonymous access** (admin) dan datasource/dashboard auto-provisioning.
+Grafana is pre-configured with **anonymous access** (admin) and auto-provisioned datasources/dashboards.
 
-### 3. Verifikasi
+### 3. Verify
 
-1. Buka http://localhost:3000 — jalanin beberapa halaman
-2. Buka http://localhost:3333 — masuk ke **Dashboards > MasakCook - Observability**
-3. Cek panel **Recent Traces** dan **Log Volume**
+1. Open http://localhost:3000 — browse a few pages
+2. Open http://localhost:3333 — go to **Dashboards > MasakCook - Observability**
+3. Check the **Recent Traces** and **Log Volume** panels
 
-## Komponen
+## Components
 
 ### Frontend Observability (Faro)
 
 File: `src/shared-components/FrontendObservability.tsx`
 
-Client component yang menginisialisasi Grafana Faro Web SDK. Mengirim:
+A client component that initializes the Grafana Faro Web SDK. Sends:
 - **Web Vitals** (CLS, LCP, FID, INP)
 - **Error tracking** (unhandled exceptions, promise rejections)
 - **Session data** (page views, navigation)
-- **Traces** (HTTP request tracing dari browser)
+- **Traces** (HTTP request tracing from the browser)
 
-Konfigurasi endpoint via env var:
+Endpoint configuration via env var:
 
 ```bash
 NEXT_PUBLIC_FARO_COLLECTOR_URL=http://localhost:12347
@@ -83,11 +83,11 @@ NEXT_PUBLIC_APP_ENV=development
 
 ### Backend Tracing (OpenTelemetry + Tempo)
 
-File: `src/instrumentation.ts`, `src/middleware.ts`
+Files: `src/instrumentation.ts`, `src/middleware.ts`
 
-Server-side tracing via `@vercel/otel` dengan:
-- **Span cardinality reduction** — `/_next/static`, `/_next/data`, `/_next/image` di-group
-- **Server-Timing header** — traceparent di-response header untuk korelasi frontend↔backend
+Server-side tracing via `@vercel/otel` with:
+- **Span cardinality reduction** — `/_next/static`, `/_next/data`, `/_next/image` are grouped
+- **Server-Timing header** — traceparent in response headers for frontend↔backend correlation
 
 Env vars:
 
@@ -100,15 +100,15 @@ OTEL_SERVICE_NAME=masakcook
 
 Config: `docker/faro-collector/collector-config.yml`
 
-Menerima payload Faro dari browser, lalu:
-- **Traces** → diteruskan ke Tempo (OTLP gRPC)
-- **Logs/Events** → diteruskan ke Loki (HTTP push)
+Receives Faro payloads from the browser, then:
+- **Traces** → forwarded to Tempo (OTLP gRPC)
+- **Logs/Events** → forwarded to Loki (HTTP push)
 
 ### Tempo
 
 Config: `docker/tempo/tempo-config.yml`
 
-Distributed tracing backend dengan retention 24 jam. Menerima data dari:
+Distributed tracing backend with 24-hour retention. Receives data from:
 - Faro Collector (frontend traces)
 - Next.js app (backend traces via OTLP HTTP)
 
@@ -116,17 +116,17 @@ Distributed tracing backend dengan retention 24 jam. Menerima data dari:
 
 Config: `docker/loki/loki-config.yml`, `docker/promtail/promtail-config.yml`
 
-Loki menyimpan logs dengan retention 7 hari. Promtail meng-scrape log dari semua container Docker via Docker socket.
+Loki stores logs with 7-day retention. Promtail scrapes logs from all Docker containers via the Docker socket.
 
 ### Grafana
 
 Provisioning: `docker/grafana/datasources/`, `docker/grafana/dashboards/`
 
-Datasource auto-configured:
-- **Tempo** — link ke Loki untuk trace→logs
-- **Loki** — derived fields untuk logs→trace
+Auto-configured datasources:
+- **Tempo** — linked to Loki for trace→logs navigation
+- **Loki** — derived fields for logs→trace linking
 
-Dashboard **MasakCook - Observability** dengan panel:
+Dashboard **MasakCook - Observability** with panels:
 - Services overview
 - Log volume per container (30m)
 - Recent traces table
@@ -134,14 +134,14 @@ Dashboard **MasakCook - Observability** dengan panel:
 
 ## Environment Variables
 
-Lihat `.env.example`:
+See `.env.example`:
 
 ```bash
 # Faro Collector (self-hosted via Docker)
 NEXT_PUBLIC_FARO_COLLECTOR_URL=http://localhost:12347
 NEXT_PUBLIC_APP_ENV=development
 
-# OpenTelemetry - Backend tracing ke Tempo
+# OpenTelemetry - Backend tracing to Tempo
 OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4318
 OTEL_SERVICE_NAME=masakcook
 ```
@@ -168,46 +168,46 @@ docker/
     └── tempo-config.yml
 ```
 
-### Perintah Berguna
+### Useful Commands
 
 ```bash
-# Lihat log semua service
+# View logs from all services
 docker compose logs -f
 
-# Lihat log service tertentu
+# View logs from a specific service
 docker compose logs -f app
 docker compose logs -f tempo
 
-# Restart service tertentu
+# Restart a specific service
 docker compose restart grafana
 
-# Hapus semua data volumes
+# Remove all data volumes
 docker compose down -v
 
-# Build ulang app aja
+# Rebuild only the app
 DOCKER_BUILD=true docker compose build app
 ```
 
 ## Troubleshooting
 
-**Grafana tidak bisa query Tempo**
-Pastikan Tempo sudah running: `docker compose ps tempo`. Cek log: `docker compose logs tempo`.
+**Grafana cannot query Tempo**
+Make sure Tempo is running: `docker compose ps tempo`. Check logs: `docker compose logs tempo`.
 
-**Faro data tidak muncul di Grafana**
-1. Buka browser DevTools > Network, filter `collect`
-2. Pastikan ada POST ke `http://localhost:12347/collect`
-3. Cek log Faro collector: `docker compose logs faro-collector`
+**Faro data not showing in Grafana**
+1. Open browser DevTools > Network, filter by `collect`
+2. Verify there are POST requests to `http://localhost:12347/collect`
+3. Check Faro collector logs: `docker compose logs faro-collector`
 
-**OTLP trace dari backend tidak sampai**
-1. Cek env var `OTEL_EXPORTER_OTLP_ENDPOINT` sudah di-set
-2. Cek koneksi: `docker compose exec app wget -qO- http://tempo:4318`
-3. Cek log app: `docker compose logs app`
+**OTLP traces from backend not arriving**
+1. Verify the `OTEL_EXPORTER_OTLP_ENDPOINT` env var is set
+2. Check connectivity: `docker compose exec app wget -qO- http://tempo:4318`
+3. Check app logs: `docker compose logs app`
 
-**Port bentrok**
-Ubah port mapping di `docker-compose.yml`:
+**Port conflict**
+Change the port mapping in `docker-compose.yml`:
 ```yaml
 services:
   grafana:
     ports:
-      - "3334:3000"  # ganti 3333 → 3334
+      - "3334:3000"  # change 3333 → 3334
 ```
