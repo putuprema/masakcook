@@ -6,9 +6,9 @@ A **Grafana**-based observability stack running on Docker, covering **frontend R
 
 ```mermaid
 flowchart LR
-    Browser -->|RUM data| FC[Faro Collector :12347]
-    FC -->|traces| Tempo
-    FC -->|logs| Loki
+    Browser -->|RUM data| Alloy[Grafana Alloy :12347]
+    Alloy -->|traces| Tempo
+    Alloy -->|logs| Loki
     App[Next.js App :3000] -->|OTLP| Tempo
     App -->|stdout| Promtail
     Promtail -->|log stream| Loki
@@ -19,7 +19,7 @@ flowchart LR
 | Service | Port | Description |
 |---|---|---|
 | **App** | `:3000` | Next.js app |
-| **Faro Collector** | `:12347` | Receives RUM data from browser (web vitals, errors, traces) |
+| **Alloy** | `:12347` | Unified collector with Faro receiver (RUM data from browser) |
 | **Tempo** | `:3200` (:4317 gRPC, :4318 HTTP) | Tracing backend |
 | **Loki** | `:3100` | Log aggregation |
 | **Promtail** | — | Ships Docker logs to Loki |
@@ -96,20 +96,20 @@ OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4318
 OTEL_SERVICE_NAME=masakcook
 ```
 
-### Faro Collector
+### Grafana Alloy (Faro Receiver)
 
-Config: `docker/faro-collector/collector-config.yml`
+Config: `docker/alloy/config.alloy`
 
-Receives Faro payloads from the browser, then:
-- **Traces** → forwarded to Tempo (OTLP gRPC)
-- **Logs/Events** → forwarded to Loki (HTTP push)
+Grafana Alloy acts as the unified collector with a built-in Faro receiver. It receives Faro payloads from the browser, then:
+- **Traces** → forwarded to Tempo via OTLP gRPC
+- **Logs/Events** → forwarded to Loki via HTTP push
 
 ### Tempo
 
 Config: `docker/tempo/tempo-config.yml`
 
 Distributed tracing backend with 24-hour retention. Receives data from:
-- Faro Collector (frontend traces)
+- Alloy (frontend traces via Faro receiver)
 - Next.js app (backend traces via OTLP HTTP)
 
 ### Loki + Promtail
@@ -152,8 +152,8 @@ OTEL_SERVICE_NAME=masakcook
 
 ```
 docker/
-├── faro-collector/
-│   └── collector-config.yml
+├── alloy/
+│   └── config.alloy
 ├── grafana/
 │   ├── datasources/
 │   │   └── datasources.yml
@@ -196,7 +196,7 @@ Make sure Tempo is running: `docker compose ps tempo`. Check logs: `docker compo
 **Faro data not showing in Grafana**
 1. Open browser DevTools > Network, filter by `collect`
 2. Verify there are POST requests to `http://localhost:12347/collect`
-3. Check Faro collector logs: `docker compose logs faro-collector`
+3. Check Alloy logs: `docker compose logs alloy`
 
 **OTLP traces from backend not arriving**
 1. Verify the `OTEL_EXPORTER_OTLP_ENDPOINT` env var is set

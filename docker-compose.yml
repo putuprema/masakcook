@@ -13,7 +13,7 @@ services:
       - OTEL_SERVICE_NAME=masakcook
     depends_on:
       - tempo
-      - faro-collector
+      - alloy
     restart: unless-stopped
     networks:
       - masakcook
@@ -56,12 +56,13 @@ services:
     networks:
       - masakcook
 
-  faro-collector:
-    image: grafana/faro-collector:latest
+  alloy:
+    image: grafana/alloy:latest
+    command: ["run", "--server.http.listen-addr=0.0.0.0:12345", "/etc/alloy/config.alloy"]
     ports:
       - "12347:12347"
     volumes:
-      - ./docker/faro-collector/collector-config.yml:/etc/faro-collector/config.yml
+      - ./docker/alloy/config.alloy:/etc/alloy/config.alloy
     depends_on:
       - tempo
       - loki

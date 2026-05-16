@@ -85,7 +85,7 @@ masakcook/
 │   └── types/                    # TypeScript types
 │       └── recipe.ts
 ├── docker/                       # Docker & monitoring configs
-│   ├── faro-collector/
+│   ├── alloy/
 │   ├── grafana/
 │   ├── loki/
 │   ├── promtail/
