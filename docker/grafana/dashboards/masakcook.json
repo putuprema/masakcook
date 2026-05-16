@@ -1,0 +1,135 @@
+{
+  "title": "MasakCook - Observability",
+  "uid": "masakcook-observability",
+  "tags": ["masakcook"],
+  "schemaVersion": 39,
+  "version": 4,
+  "timezone": "browser",
+  "editable": true,
+  "panels": [
+    {
+      "title": "Services Overview",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "count(count by(container) (rate({container=~\".+\"}[5m])))"
+        }
+      ],
+      "description": "Number of services sending logs"
+    },
+    {
+      "title": "Log Volume (30m)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum by(container) (rate({container=~\".+\"}[5m]))",
+          "legendFormat": "{{container}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "showPoints": "never" }
+        }
+      },
+      "description": "Log volume per container"
+    },
+    {
+      "title": "Recent Traces",
+      "type": "table",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "targets": [
+        {
+          "datasource": { "type": "tempo", "uid": "tempo" },
+          "queryType": "traceql",
+          "query": "{}",
+          "limit": 20,
+          "tableType": "traces"
+        }
+      ],
+      "description": "Most recent traces from Tempo"
+    },
+    {
+      "title": "Trace Duration (p95)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "targets": [
+        {
+          "datasource": { "type": "tempo", "uid": "tempo" },
+          "queryType": "traceql",
+          "query": "{ }",
+          "limit": 100
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": { "showPoints": "never" }
+        }
+      },
+      "description": "P95 trace duration for the app"
+    },
+    {
+      "title": "Page Views",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "count(count_over_time({app_name=\"MasakCook\"} |= `pageview` [$__range]))"
+        }
+      ],
+      "description": "Total page views (from Faro)"
+    },
+    {
+      "title": "Page Views Over Time",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum by(url) (count_over_time({app_name=\"MasakCook\"} |= `pageview` [$__interval]))",
+          "legendFormat": "{{url}}"
+        }
+      ],
+      "description": "Page views over time by URL (from Faro)"
+    },
+    {
+      "title": "JS Errors",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 6, "x": 0, "y": 36 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum(rate({app_name=\"MasakCook\"} |= `exception` [$__interval]))",
+          "legendFormat": "errors"
+        }
+      ],
+      "description": "JavaScript error rate (from Faro)"
+    },
+    {
+      "title": "Web Vitals (LCP)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 6, "x": 6, "y": 36 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "avg by (url) (rate({app_name=\"MasakCook\"} |= `LCP` [$__interval]))",
+          "legendFormat": "{{url}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        }
+      },
+      "description": "Largest Contentful Paint (from Faro)"
+    }
+  ],
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" }
+}

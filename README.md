@@ -38,6 +38,22 @@ TypeScript, and Tailwind CSS v4.
 - **Linter/Formatter:** Biome 2.2.0
 - **Package Manager:** pnpm
 - **Fonts:** Geist Sans & Geist Mono
+- **Monitoring:** Grafana + Loki + Tempo + Faro (via Docker)
+
+## Monitoring
+
+See [MONITORING.md](./MONITORING.md) for full observability setup documentation:
+
+- **Frontend RUM** — Grafana Faro Web SDK (web vitals, errors, tracing)
+- **Backend Tracing** — OpenTelemetry + Tempo
+- **Log Management** — Loki + Promtail
+- **Dashboard** — Grafana with auto-provisioned datasources & dashboards
+
+```bash
+DOCKER_BUILD=true docker compose up --build
+```
+
+Access Grafana at [http://localhost:3333](http://localhost:3333)
 
 ## Project Structure
 
@@ -68,10 +84,18 @@ masakcook/
 │   │   └── recipes.ts            # Data fetching utils
 │   └── types/                    # TypeScript types
 │       └── recipe.ts
+├── docker/                       # Docker & monitoring configs
+│   ├── alloy/
+│   ├── grafana/
+│   ├── loki/
+│   ├── promtail/
+│   └── tempo/
 ├── public/                       # Static assets
 ├── biome.json                    # Biome config
 ├── next.config.ts                # Next.js config
 ├── tailwind.config.ts            # Tailwind config
+├── Dockerfile                    # Docker image build
+├── docker-compose.yml            # Monitoring stack orchestrator
 └── tsconfig.json                 # TypeScript config
 ```
 
@@ -81,8 +105,11 @@ masakcook/
 
 - Node.js 20+
 - pnpm (recommended)
+- Docker & Docker Compose (for monitoring stack)
 
 ### Installation
+
+#### Local (without Docker)
 
 1. Clone the repository
 
@@ -114,6 +141,25 @@ pnpm start        # Start production server
 pnpm lint         # Run Biome linter
 pnpm lint:fix     # Fix linter issues
 ```
+
+#### Docker (with monitoring stack)
+
+1. Clone & enter directory
+
+```bash
+git clone <repository-url>
+cd masakcook
+```
+
+2. Build & run all services
+
+```bash
+DOCKER_BUILD=true docker compose up --build
+```
+
+3. Access:
+   - App: [http://localhost:3000](http://localhost:3000)
+   - Grafana: [http://localhost:3333](http://localhost:3333)
 
 ## Key Features Implementation
 

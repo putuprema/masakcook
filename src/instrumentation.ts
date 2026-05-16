@@ -1,5 +1,9 @@
-import { Context } from "@opentelemetry/api";
-import { ReadableSpan, Span, SpanProcessor } from "@opentelemetry/sdk-trace-node";
+import type { Context } from "@opentelemetry/api";
+import type {
+  ReadableSpan,
+  Span,
+  SpanProcessor,
+} from "@opentelemetry/sdk-trace-node";
 import { registerOTel } from "@vercel/otel";
 
 /**
@@ -11,7 +15,7 @@ class SpanNameProcessor implements SpanProcessor {
   forceFlush(): Promise<void> {
     return Promise.resolve();
   }
-  onStart(span: Span, parentContext: Context): void {
+  onStart(span: Span, _parentContext: Context): void {
     if (span.name.startsWith("GET /_next/static")) {
       span.updateName("GET /_next/static");
     } else if (span.name.startsWith("GET /_next/data")) {
@@ -20,8 +24,7 @@ class SpanNameProcessor implements SpanProcessor {
       span.updateName("GET /_next/image");
     }
   }
-  onEnd(span: ReadableSpan): void {
-  }
+  onEnd(_span: ReadableSpan): void {}
   shutdown(): Promise<void> {
     return Promise.resolve();
   }
@@ -30,10 +33,6 @@ class SpanNameProcessor implements SpanProcessor {
 export function register() {
   registerOTel({
     serviceName: process.env.OTEL_SERVICE_NAME || "unknown_service:node",
-    spanProcessors: [
-      "auto",
-      new SpanNameProcessor(),
-    ],
+    spanProcessors: ["auto", new SpanNameProcessor()],
   });
 }
-

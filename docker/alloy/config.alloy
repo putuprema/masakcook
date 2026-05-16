@@ -1,0 +1,37 @@
+faro.receiver "default" {
+    server {
+        listen_port        = 12347
+        listen_address     = "0.0.0.0"
+        cors_allowed_origins = ["*"]
+    }
+
+    output {
+        logs   = [loki.process.faro.receiver]
+        traces = [otelcol.exporter.otlp.tempo.input]
+    }
+}
+
+loki.process "faro" {
+    stage.static_labels {
+        values = {
+            service = "faro",
+        }
+    }
+
+    forward_to = [loki.write.default.receiver]
+}
+
+otelcol.exporter.otlp "tempo" {
+    client {
+        endpoint = "tempo:4317"
+        tls {
+            insecure = true
+        }
+    }
+}
+
+loki.write "default" {
+    endpoint {
+        url = "http://loki:3100/loki/api/v1/push"
+    }
+}
